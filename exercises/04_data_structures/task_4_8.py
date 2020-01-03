@@ -19,3 +19,16 @@
 '''
 
 ip = '192.168.3.1'
+'''
+# Wrong method
+ip_split = (ip.split('.'))
+for num in ip_split:
+	print(bin(int(num)))
+'''
+
+# How to use .format for list or maybe string?
+ip_template = '''
+{:<10} {:<10} {:<10} {:<10}
+{:010b} {:010b} {:010b} {:010b}
+'''
+print(ip_template.format(192, 168, 3, 1, 192, 168, 3, 1))

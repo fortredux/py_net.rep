@@ -10,5 +10,3 @@
 '''
 
 mac = 'AAAA:BBBB:CCCC'
-
-print(bin('AAAA'))
