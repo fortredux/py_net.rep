@@ -46,3 +46,10 @@ london_co = {
         'routing': True
     }
 }
+
+r1 = london_co['r1']
+r2 = london_co['r2']
+r3 = london_co['sw1']
+device = input('Введите имя устройства: ')
+print(device)
+# Why dictionary output sorted wrong or random?
