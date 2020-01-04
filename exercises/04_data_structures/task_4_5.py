@@ -13,3 +13,16 @@
 
 command1 = 'switchport trunk allowed vlan 1,2,3,5,8'
 command2 = 'switchport trunk allowed vlan 1,3,8,9'
+#Nightmare code
+x = command1.find('1')
+command1 = command1[x:]
+y = command2.find('1')
+command2 = command2[x:]
+command_unite = command1 + ',' + command2
+command_unite = command_unite.split(',')
+command_unite = sorted(command_unite)
+a = command_unite.index('1')
+b = command_unite.index('3')
+c = command_unite.index('8')
+command_unite = list(command_unite[a] + command_unite[b] + command_unite[c])
+print(command_unite)
