@@ -47,10 +47,14 @@ london_co = {
 }
 
 device = input('Введите имя устройства: ')
-
+'''
 vocab = london_co[device].keys()
 vocab = str(vocab)
 vocab = vocab[11:-2]
+'''
+vocab = str(london_co[device].keys()) #Shorter version
+vocab = vocab[11:-2]
+
 vocab = vocab.replace("'", "")
 
 paste = 'Введите имя параметра (' + vocab + '):'
