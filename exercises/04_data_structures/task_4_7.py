@@ -16,5 +16,5 @@ mac = mac_new.split(':')
 mac0 = bin(int(mac[0]))
 mac1 = bin(int(mac[1]))
 mac2 = bin(int(mac[2]))
-mac_final = mac0+mac1+mac2
-print(mac_final[2:])
+mac_final = mac0[2:]+mac1[2:]+mac2[2:]
+print(mac_final)

@@ -13,8 +13,16 @@
 '''
 
 vlans = [10, 20, 30, 1, 2, 100, 10, 30, 3, 4, 10]
+'''
+vlans1 = list(set(vlans)) # Функция set() переводит во множество {}
+vlans1.sort()             # а на множество не сработал бы метод sort
+'''
+# vlans1 = list(set(vlans)).sort() # Этот вариант выводит None
+'''
+vlans1 = list(set(vlans)) # Этот тоже None
+vlans1 = vlans1.sort()    # Проблема здесь
+'''                       # Метод .sort() ничего не возвращает и обнуляет список
+# print(vlans1)
+print(sorted(list(set(vlans))))
 
-vlans1 = list(set(vlans))
-vlans1.sort()
-print(vlans1)
 

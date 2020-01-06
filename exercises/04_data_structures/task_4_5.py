@@ -13,7 +13,7 @@
 
 command1 = 'switchport trunk allowed vlan 1,2,3,5,8'
 command2 = 'switchport trunk allowed vlan 1,3,8,9'
-#Nightmare code
+''' #Nightmare code
 x = command1.find('1')
 command1 = command1[x:]
 y = command2.find('1')
@@ -26,3 +26,8 @@ b = command_unite.index('3')
 c = command_unite.index('8')
 command_unite = list(command_unite[a] + command_unite[b] + command_unite[c])
 print(command_unite)
+'''
+comm1 = set(command1.split()[-1].split(',')) # Режем и преобразуем во множество
+comm2 = set(command2.split()[-1].split(','))
+# print(comm1 & comm2)                       # Вывод будет set(['1', '8', '3'])
+print(list(comm1 & comm2))                   # Поэтому преобразуем в список для ['1', '3', '8']

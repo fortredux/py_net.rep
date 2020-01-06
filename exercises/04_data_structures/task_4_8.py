@@ -19,16 +19,18 @@
 '''
 
 ip = '192.168.3.1'
-'''
-# Wrong method
-ip_split = (ip.split('.'))
-for num in ip_split:
-	print(bin(int(num)))
-'''
 
-# How to use .format for list or maybe string?
 ip_template = '''
-{:<10} {:<10} {:<10} {:<10}
-{:010b} {:010b} {:010b} {:010b}
+{0:<10} {1:<10} {2:<10} {3:<10}
+{0:010b} {1:010b} {2:010b} {3:010b}
 '''
-print(ip_template.format(192, 168, 3, 1, 192, 168, 3, 1))
+ip_split = ip.split('.')
+
+a = int(ip_split[0])  # Нужно перевести в число,
+b = int(ip_split[1])  # иначе будет ошибка,
+c = int(ip_split[2])  # ведь в шаблоне для перевода в двоичную систему
+d = int(ip_split[3])  # нужны числа, а не сторки
+
+print(ip_template.format(a, b, c, d))
+
+
