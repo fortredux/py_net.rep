@@ -61,27 +61,20 @@ access_trunk = input("Введите информацию о режиме инт
 interface = input('Введите тип и номер интерфейса: ')
 vlan_n = input('Введите номер влан(ов): ')
 
+template = [
+['switchport mode access',
+'switchport access vlan {}',
+'switchport nonegotiate',
+'spanning-tree portfast',
+'spanning-tree bpduguard enable'],
+['switchport trunk encapsulation dot1q',
+'switchport mode trunk',
+'switchport trunk allowed vlan {}']
+]
 
-access_template = ['switchport mode access', 'switchport access vlan {}',
-    'switchport nonegotiate',
-    'spanning-tree portfast',
-    'spanning-tree bpduguard enable']
+var1 = access_trunk.count('trunk')
 
-trunk_template = ['switchport trunk encapsulation dot1q',
-    'switchport mode trunk',
-    'switchport trunk allowed vlan {}']
-
-final_template = '{}_template'.format(access_trunk)
-access_template = final_template
-trunk_template = final_template
-#print('interface {}'.format(interface))
-
-'''
-print('\n'.join(access_template).format(vlan_n))
-print('\n'.join(trunk_template).format(vlan_n))
-'''
-
-
-
-
-
+print('\n')
+print('interface {}'.format(interface))          # Без '\n'.join будет выдавать
+#print(template[var1].format(vlan_n))            # AttributeError: 'list' object has no attribute 'format'
+print('\n'.join(template[var1]).format(vlan_n))
