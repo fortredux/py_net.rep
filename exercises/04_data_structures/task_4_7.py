@@ -10,11 +10,15 @@
 '''
 
 mac = 'AAAA:BBBB:CCCC'
-
+'''
 mac_new = '1234:1234:1234'
 mac = mac_new.split(':')
 mac0 = bin(int(mac[0]))
 mac1 = bin(int(mac[1]))
 mac2 = bin(int(mac[2]))
 mac_final = mac0[2:]+mac1[2:]+mac2[2:]
-print(mac_final)
+print(mac_final)                         # Мое старое решение
+'''
+mac = int(mac.replace(':', ''), 16)      # Новое по подсказке.
+print(bin(mac)[2:])                      # Только почему переводим в 16,
+                                         # а потом в бинарный вид???

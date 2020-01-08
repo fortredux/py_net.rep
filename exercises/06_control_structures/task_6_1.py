@@ -12,12 +12,22 @@
 '''
 
 mac = ['aabb:cc80:7000', 'aabb:dd80:7340', 'aabb:ee80:7000', 'aabb:ff80:7000']
-
+'''
 mac_cisco = str(mac)[1:-1]
-mac_cisco = mac_cisco.replace('[', '')
+mac_cisco = mac_cisco.replace('[', '')           #Громоздкий вариант на старый манер
 mac_cisco = mac_cisco.replace(']', '')
 mac_cisco = mac_cisco.replace(':', '.')
 mac_cisco = mac_cisco.replace("'", '')
 mac_cisco = mac_cisco.split(',')
-
-print(mac_cisco)
+'''
+'''
+mac3 = []                                 # Первый вариант
+for mac_addr in mac:
+    mac2 = mac_addr.replace(':', '.')
+    mac3.append(mac2)
+    print(mac3)                           # print в этом месте ввыведет
+'''                                       # каждый append на каждую итерацию
+mac3 = []
+for mac_addr in mac:
+    mac3.append(mac_addr.replace(':', '.'))
+print(mac3)

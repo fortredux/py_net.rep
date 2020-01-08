@@ -30,3 +30,30 @@ Mask:
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 '''
+
+data = input('Введите IP-адресс и маску сети в формате ip/mask: ')
+
+mask_split = data.split('/')
+ip = str(mask_split[0])
+mask = int(mask_split[1])
+
+host_net_lst = ip.split('.')         # ip in list mode
+host_net_lst[3] = '0'                # convert to net address (still list)
+
+mask_32 = int('1' * mask)
+mask_32 = '{:<032}'.format(mask_32)  # С знаком '<' нули добавляются справа
+
+template = '''
+Network:
+{0:<8} {1:<8} {2:<8} {3:<8}
+{0:08b} {1:08b} {2:08b} {3:08b}
+
+Mask:
+/{4:}
+{5:<8} {6:<8} {7:<8} {8:<8}
+{9:8} {10:8} {11:8} {12:8}
+'''
+
+print(template.format(int(host_net_lst[0]), int(host_net_lst[1]), int(host_net_lst[2]), int(host_net_lst[3]), mask,
+int(mask_32[0:8], 2), int(mask_32[8:16], 2), int(mask_32[16:24], 2), int(mask_32[24:32], 2),
+mask_32[0:8], mask_32[8:16], mask_32[16:24], mask_32[24:32]))
