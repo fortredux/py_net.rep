@@ -14,3 +14,17 @@ Outbound Interface:    FastEthernet0/0
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 '''
+
+template = '''
+Protocol:              OSPF
+Prefix:                {}
+AD/Metric:             {}
+Next-Hop:              {}
+Last update:           {}
+Outbound Interface:    {}
+'''
+
+with open('/home/python/pynet_rep/exercises/07_files/ospf.txt', 'r') as data:
+    for line in data:
+        line = line.replace(',', '').replace('[', '').replace(']', '').split()
+        print(template.format(line[1], line[2], line[4], line[5], line[6]))
