@@ -15,5 +15,11 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 '''
+from sys import argv
 
 ignore = ['duplex', 'alias', 'Current configuration']
+
+with open(argv[1], 'r') as src, open(argv[2], 'w') as dest:
+    for line in src:
+        if line.find(ignore[0]) is -1 and line.find(ignore[1]) is -1 and line.find(ignore[2]) is -1:
+            dest.write(line)

@@ -13,3 +13,8 @@
 '''
 
 ignore = ['duplex', 'alias', 'Current configuration']
+
+with open('/home/python/pynet_rep/exercises/07_files/config_sw1.txt', 'r') as text:
+    for line in text:
+        if line.startswith('!') is not True and line.find(ignore[0]) is -1 and line.find(ignore[1]) is -1 and line.find(ignore[2]) is -1:
+            print(line.rstrip())

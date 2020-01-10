@@ -12,3 +12,10 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 '''
+from sys import argv
+data = argv[1]
+
+with open(data, 'r') as text:
+    for line in text:
+        if line.startswith('!') is not True:
+            print(line.rstrip())
