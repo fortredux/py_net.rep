@@ -17,3 +17,7 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 '''
+with open('/home/python/pynet_rep/exercises/07_files/CAM_table.txt', 'r') as data:
+    for line in data:
+        if line.find('DYNAMIC') is not -1:
+            print(line.rstrip().replace('   DYNAMIC   ', ''))

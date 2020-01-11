@@ -22,3 +22,28 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 '''
+
+with open('/home/python/pynet_rep/exercises/07_files/CAM_table.txt', 'r') as data:
+    list_sort = []
+    for line in data:
+        if line.find('DYNAMIC') is not -1:
+            list_sort.append(line.rstrip().replace('   DYNAMIC   ', ''))
+        list_sort.sort()
+    for line1 in list_sort:
+        print(line1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
