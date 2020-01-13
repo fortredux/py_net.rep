@@ -40,5 +40,18 @@ access_config = {
     'FastEthernet0/16': 17
 }
 
+def access_list_generate(port_config, port_security=False):
+    final_list = []
+    for key, value in port_config.items():
+        final_list.append('inteface {}'.format(key))
+        for line in access_mode_template:
+            if line.endswith('access vlan'):
+                final_list.append('{} {}'.format(line, value))
+            else:
+                final_list.append(line)
+        for line in port_security_template:
+            if port_security:
+                final_list.append(line)
+    return final_list
 
-
+print('\n'.join(access_list_generate(access_config, True)))
