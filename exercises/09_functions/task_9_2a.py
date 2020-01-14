@@ -26,3 +26,19 @@ trunk_config = {
     'FastEthernet0/4': [17]
 }
 
+def generate_trunk_config(mode, config):
+    final_dict = {}
+    for key, value in config.items():
+        final_dict[key] = []
+        for line in mode:
+            if line.endswith('allowed vlan'):
+                value = [str(num) for num in value]
+                line = '{} {}'.format(line, ','.join(value))
+                final_dict[key].append(line)
+            else:
+                final_dict[key].append(line)
+    return final_dict
+
+for key, values in generate_trunk_config(trunk_mode_template, trunk_config).items():
+    print(key)
+    print('\n'.join(values))
