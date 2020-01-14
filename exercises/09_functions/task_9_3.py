@@ -24,25 +24,25 @@
 
 def get_int_vlan_map(config_filename):
     with open(config_filename, 'r') as f:
-        final_dict = {'acces_list' : {}, 'trunk_list': {}}
-        access_dict = {}
-        trunk_dict = {}
+        final_dict = {'access_list' : {}, 'trunk_list': {}}
         for line in f:
             if line.startswith('interface'):
                 interf = line.split()[1]
             elif line.find('access vlan') is not -1:
                 access_vlan = int(line.split()[-1])
-                access_dict[interf] = access_vlan
+                final_dict['access_list'][interf] = access_vlan
             elif line.find('allowed vlan') is not -1:
                 trunk_vlan = line.split()[-1].split(',')
                 trunk_vlan = [int(num) for num in trunk_vlan]
-                trunk_dict[interf] = trunk_vlan
+                final_dict['trunk_list'][interf] = trunk_vlan
             else:
                 pass
-        final_dict['acces_list'] = access_dict
-        final_dict['trunk_list'] = trunk_dict
     return final_dict
 
 for keys,values in get_int_vlan_map('/home/python/pynet_rep/exercises/09_functions/config_sw1.txt').items():
-    #print(keys)
-    print(values)
+    if keys is 'access_list':
+        print('Access List:')
+    elif keys is 'trunk_list':
+        print('Trunk List:')
+    for intf, vlans in values.items():
+        print('{}: {}'.format(intf, vlans))

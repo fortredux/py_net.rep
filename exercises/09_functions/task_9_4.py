@@ -35,3 +35,26 @@ def ignore_command(command, ignore):
     * False - если нет
     '''
     return any(word in command for word in ignore)
+
+def convert_config_to_dict(config_filename):
+    dic = {}
+    with open(config_filename, 'r') as f:
+        for line in f:
+            if ignore_command(line, ignore) is True:
+                continue
+            elif line.startswith('!'):
+                continue
+            elif line.startswith('\n'):
+                continue
+            else:
+                if line.startswith(' ') is False:
+                    key = line.strip()
+                    dic[key] = []
+                if line.startswith(' '):
+                    value = line.strip()
+                    dic[key].append(value)
+    return dic
+
+for keys, value in convert_config_to_dict('/home/python/pynet_rep/exercises/09_functions/config_sw1.txt').items():
+    print(keys)
+    print(value, '\n')
