@@ -25,7 +25,6 @@
 
 def get_int_vlan_map(config_filename):
     with open(config_filename, 'r') as f:
-        final_tuple = ()
         access_dict = {}
         trunk_dict = {}
         for line in f:
