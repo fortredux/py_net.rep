@@ -22,11 +22,18 @@
 
 '''
 
+import re
+
+"""
 def parse_sh_ip_int_br(file):
     '''
-    This function takes a filename as an argument and returns tuple with main information.
+    This function takes a name of file wich contains result of command 'show ip int br'
+    as an argument and returns tuple with this information:
+    * Interface
+    * IP-Address
+    * Status
+    * Protocol
     '''
-    import re
     f = open(file).read().split('\n')
     final_list = []
     for line in f:
@@ -35,6 +42,14 @@ def parse_sh_ip_int_br(file):
             intf, ip, stat, prot = match.groups()
             final_list.append((intf, ip, stat, prot))
     return final_list
+"""
+
+def parse_sh_ip_int_br(file):
+    with open(file, 'r') as f:
+        regex = r'(\S+\d)\s+(\S+) .+ (\S+)\s+(\S+)\n'
+        final_list = [m.groups() for m in re.finditer(regex, f.read())]
+    return final_list
+
 
 if __name__=='__main__':
     from pprint import pprint
