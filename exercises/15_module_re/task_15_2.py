@@ -44,10 +44,37 @@ def parse_sh_ip_int_br(file):
     return final_list
 """
 
+'''
+def parse_sh_ip_int_br(filename):
+    final_list = []
+    with open(filename, 'r') as f:
+        for line in f:
+            match = re.search(r'(\S+\d) +(\S+) +\w+ +\w+ +(up|down|administratively down) +(up|down)\n', line)
+            if match:
+                final_list.append(match.groups())
+    return final_list
+'''
+
+'''
 def parse_sh_ip_int_br(file):
     with open(file, 'r') as f:
-        regex = r'(\S+\d)\s+(\S+) .+ (\S+)\s+(\S+)\n'
+        regex = r'(\S+\d) +(\S+) +\w+ +\w+ +(up|down|administratively down) +(up|down)\n'
         final_list = [m.groups() for m in re.finditer(regex, f.read())]
+    return final_list
+'''
+
+'''
+def parse_sh_ip_int_br(file):
+    with open(file, 'r') as f:
+        #regex = r'(\S+\d) +(\S+) +\w+ +\w+ +(up|down|administratively down) +(up|down)\n'
+        #final_list = re.findall(regex, f.read())
+    return final_list
+'''
+
+
+def parse_sh_ip_int_br(file):
+    with open(file, 'r') as f:
+        final_list = re.findall(r'(\S+\d) +(\S+) +\w+ +\w+ +(up|down|administratively down) +(up|down)\n', f.read())
     return final_list
 
 

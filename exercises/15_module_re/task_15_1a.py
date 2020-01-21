@@ -22,3 +22,36 @@
 диапазоны адресов и так далее, так как обрабатывается вывод команды, а не ввод пользователя.
 
 '''
+import re
+
+"""
+def get_ip_from_cfg(filename):
+    '''
+    This function takes filename of configuration file as an argument and gives back dictionary with such parameters:
+    * key: interface
+    * value: tuple with strings:
+        * IP-address
+        * mask
+    '''
+    with open(filename) as f:
+        final_dict = {}
+        regex = (r'\ninterface (\S+\d).+?'
+                 r'ip address (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+).+?!')
+        for match in re.finditer(regex, f.read(), re.DOTALL):
+            final_dict[match.group(1)] = (match.group(2), match.group(3))
+
+    return final_dict
+"""
+
+def get_ip_from_cfg(filename):
+    with open(filename, 'r') as f:
+        regex = (r'\ninterface (?P<intf>\S+\d).+?'
+             r'ip address (?P<ip>\d+\.\d+\.\d+\.\d+) (?P<mask>\d+\.\d+\.\d+\.\d+).+?!')
+        final_dict = {match.group('intf'): (match.group('ip'), match.group('mask')) for match in re.finditer(regex, f.read(), re.DOTALL)}
+
+    return final_dict
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    pprint(get_ip_from_cfg('/home/vagrant/GitHub/pynet_rep/exercises/15_module_re/config_r1.txt'))
