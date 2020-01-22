@@ -24,3 +24,25 @@ description Connected to SW1 port Eth 0/1
 
 Проверить работу функции на файле sh_cdp_n_sw1.txt.
 '''
+
+import re
+
+
+def generate_description_from_cdp(filename):
+    regex = r'^(?P<device>\S+) \s+ (?P<local>\D+ \d+/\d+) .+ (?P<port>\D+ \d+/\d+)$'
+    template = 'description Connected to {device} port {port}'
+    final_dict = {}
+
+    with open (filename, 'r') as f:
+        for line in f:
+            m = re.search(regex, line)
+            if m:
+                #final_dict[m.group('local')] = template.format(device=m.group('device'), port=m.group('port'))
+                final_dict[m['local']] = template.format(device=m['device'], port=m['port'])
+
+    return final_dict
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    pprint(generate_description_from_cdp('/home/vagrant/GitHub/pynet_rep/exercises/15_module_re/sh_cdp_n_sw1.txt'))

@@ -24,7 +24,7 @@
 '''
 import re
 
-"""
+
 def get_ip_from_cfg(filename):
     '''
     This function takes filename of configuration file as an argument and gives back dictionary with such parameters:
@@ -33,21 +33,17 @@ def get_ip_from_cfg(filename):
         * IP-address
         * mask
     '''
-    with open(filename) as f:
-        final_dict = {}
-        regex = (r'\ninterface (\S+\d).+?'
-                 r'ip address (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+).+?!')
-        for match in re.finditer(regex, f.read(), re.DOTALL):
-            final_dict[match.group(1)] = (match.group(2), match.group(3))
 
-    return final_dict
-"""
+    regex = (r'\ninterface (?P<intf>\S+\d).+'
+             r'ip address (?P<ip>\d+\.\d+\.\d+\.\d+) (?P<mask>\d+\.\d+\.\d+\.\d+)')
+    final_dict = {}
 
-def get_ip_from_cfg(filename):
     with open(filename, 'r') as f:
-        regex = (r'\ninterface (?P<intf>\S+\d).+?'
-             r'ip address (?P<ip>\d+\.\d+\.\d+\.\d+) (?P<mask>\d+\.\d+\.\d+\.\d+).+?!')
-        final_dict = {match.group('intf'): (match.group('ip'), match.group('mask')) for match in re.finditer(regex, f.read(), re.DOTALL)}
+        f = f.read().split('!')
+        for line in f:
+            m = re.search(regex, line, re.DOTALL)
+            if m:
+                final_dict[m['intf']] = (m['ip'], m['mask'])
 
     return final_dict
 

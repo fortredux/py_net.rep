@@ -32,3 +32,23 @@ object network LOCAL_10.1.9.5
 Во всех правилах для ASA интерфейсы будут одинаковыми (inside,outside).
 '''
 
+import re
+
+
+def convert_ios_nat_to_asa(src_file, dest_file):
+    regex_src = 'ip nat inside source static tcp (?P<ip>\S+) (?P<ins>\S+) interface \S+ (?P<outs>\S+)'
+    template = '''object network LOCAL_{ip}\n host {ip}\n nat (inside,outside) static interface service tcp {ins} {outs}\n'''
+
+    with open(src_file, 'r') as src, open(dest_file, 'w') as dest:
+        for line in src:
+            match = re.search(regex_src, line)
+            if match:
+                dest.write(template.format(ip=match.group('ip'), ins=match.group('ins'), outs=match.group('outs')))
+    #return None
+
+
+if __name__ == '__main__':
+    convert_ios_nat_to_asa('/home/vagrant/GitHub/pynet_rep/exercises/15_module_re/cisco_nat_config.txt',
+                           '/home/vagrant/GitHub/pynet_rep/exercises/15_module_re/asa_config.txt')
+    with open('/home/vagrant/GitHub/pynet_rep/exercises/15_module_re/asa_config.txt', 'r') as f:
+        for line in f: print(line.rstrip())

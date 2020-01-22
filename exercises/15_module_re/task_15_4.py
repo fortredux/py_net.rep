@@ -23,3 +23,21 @@ interface Loopback0
 Проверить работу функции на примере файла config_r1.txt.
 '''
 
+import re
+
+
+def get_ints_without_description(filename):
+    final_list = []
+    with open(filename) as f:
+        for line in f:
+            if line.startswith('interface'):
+                interf = line.split()[1]
+                final_list.append(interf)
+            elif line.startswith(' description'):
+                final_list.remove(interf)
+
+    return final_list
+
+
+if __name__ == '__main__':
+    print(get_ints_without_description('/home/vagrant/GitHub/pynet_rep/exercises/15_module_re/config_r1.txt'))
