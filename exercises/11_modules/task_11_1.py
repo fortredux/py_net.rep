@@ -28,7 +28,7 @@ R6           Fa 0/2          143           R S I           2811       Fa 0/0
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 '''
 
-
+'''
 def parse_cdp_neighbors(command_output):
     f = open(command_output).read()
     f = f.split('\n')
@@ -47,3 +47,29 @@ def parse_cdp_neighbors(command_output):
 if __name__ == "__main__":
     for key,value in parse_cdp_neighbors('/home/vagrant/GitHub/pynet_rep/exercises/11_modules/sh_cdp_n_sw1.txt').items():
         print(f'{key}: {value}')
+'''
+
+
+def parse_cdp_neighbors(command_output):
+    f = command_output.split('\n')
+    f_dict = {}
+    
+    for line in f:
+        if line.endswith('show cdp neighbors'):
+            device = line.split('>')[0]
+        if line.find('Eth') is not -1:
+            line = line.split()
+            tup1 = (device, line[1]+line[2])
+            tup2 = (line[0], line[-2]+line[-1])
+            f_dict[tup1] = tup2
+            
+    return f_dict
+
+
+if __name__ == "__main__":
+    from pprint import pprint
+    
+    filename = '/home/vagrant/GitHub/pynet_rep/exercises/11_modules/sh_cdp_n_sw1.txt'
+    f = open(filename).read()
+    pprint(parse_cdp_neighbors(f))
+    

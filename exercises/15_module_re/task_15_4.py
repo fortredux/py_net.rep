@@ -25,9 +25,10 @@ interface Loopback0
 
 import re
 
-
+'''
 def get_ints_without_description(filename):
     final_list = []
+
     with open(filename) as f:
         for line in f:
             if line.startswith('interface'):
@@ -35,6 +36,20 @@ def get_ints_without_description(filename):
                 final_list.append(interf)
             elif line.startswith(' description'):
                 final_list.remove(interf)
+
+    return final_list
+'''
+
+def get_ints_without_description(filename):
+    regex = r'\ninterface (?P<intf>\S+)\n (?!description)'
+    final_list = []
+
+    f = open(filename).read().split('!')
+
+    for line in f:
+        match = re.search(regex, line, re.DOTALL)
+        if match:
+            final_list.append(match['intf'])
 
     return final_list
 

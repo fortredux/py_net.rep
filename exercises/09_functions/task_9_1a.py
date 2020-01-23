@@ -40,7 +40,8 @@ access_config = {
     'FastEthernet0/16': 17
 }
 
-def access_list_generate(port_config, port_security=False):
+'''
+def generate_access_config(port_config, port_security=False):
     final_list = []
     for key, value in port_config.items():
         final_list.append('inteface {}'.format(key))
@@ -54,4 +55,37 @@ def access_list_generate(port_config, port_security=False):
                 final_list.append(line)
     return final_list
 
-print('\n'.join(access_list_generate(access_config, True)))
+
+print('\n'.join(generate_access_config(access_config, True)))
+print('\n'.join(generate_access_config(access_config)))
+'''
+
+
+def generate_access_config(intf_vlan_mapping, access_template, psecurity=False):
+    psecurity_template = [
+    'switchport port-security maximum 2',
+    'switchport port-security violation restrict',
+    'switchport port-security'
+    ]
+    final_list = []
+    
+    for key, value in intf_vlan_mapping.items():
+        final_list.append('interface {}'.format(key))
+        for line in access_mode_template:
+            if line.endswith('access vlan'):
+                final_list.append('{} {}'.format(line, value))
+            else:
+                final_list.append(line)
+        for line in psecurity_template:
+            if psecurity:
+                final_list.append(line)
+                
+    return final_list
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    
+    pprint(generate_access_config(access_config, access_mode_template, True))
+    #pprint(generate_access_config(access_config, access_mode_template))
+    #print('\n'.join(generate_access_config(access_config, access_mode_template, True)))

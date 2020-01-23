@@ -26,8 +26,10 @@ trunk_config = {
     'FastEthernet0/4': [17]
 }
 
+'''
 def generate_trunk_config(mode, config):
     final_dict = {}
+    
     for key, value in config.items():
         final_dict[key] = []
         for line in mode:
@@ -37,8 +39,32 @@ def generate_trunk_config(mode, config):
                 final_dict[key].append(line)
             else:
                 final_dict[key].append(line)
+                
+    return final_dict
+'''
+
+def generate_trunk_config(intf_vlan_mapping, trunk_template):
+    final_dict = {}
+    
+    for key, value in intf_vlan_mapping.items():
+        final_dict[key] = []
+        for line in trunk_template:
+            if line.endswith('allowed vlan'):
+                value = [str(num) for num in value]
+                line = '{} {}'.format(line, ','.join(value))
+                final_dict[key].append(line)
+            else:
+                final_dict[key].append(line)
+                
     return final_dict
 
-for key, values in generate_trunk_config(trunk_mode_template, trunk_config).items():
-    print(key)
-    print('\n'.join(values))
+
+if __name__ == '__main__':
+    from pprint import pprint
+
+    pprint(generate_trunk_config(trunk_config, trunk_mode_template))
+    '''
+    for key, values in generate_trunk_config(trunk_config, trunk_mode_template).items():
+        print(key)
+        print('\n'.join(values))
+    '''

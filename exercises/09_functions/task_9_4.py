@@ -55,6 +55,6 @@ def convert_config_to_dict(config_filename):
                     dic[key].append(value)
     return dic
 
-for keys, value in convert_config_to_dict('/home/python/pynet_rep/exercises/09_functions/config_sw1.txt').items():
+for keys, value in convert_config_to_dict('/home/vagrant/GitHub/pynet_rep/exercises/09_functions/config_sw1.txt').items():
     print(keys)
     print(value, '\n')
