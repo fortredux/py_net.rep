@@ -45,3 +45,58 @@ sh_version_files = glob.glob('sh_vers*')
 #print(sh_version_files)
 
 headers = ['hostname', 'ios', 'image', 'uptime']
+
+
+import re
+import csv
+
+#sh_version_files = ['sh_version_r1.txt', 'sh_version_r2.txt', 'sh_version_r3.txt']
+
+
+def parse_sh_version(line):
+    regex = (r'Cisco IOS Software,.+?, Version (?P<ios>\S+),.+'
+            r'router uptime is (?P<uptime>\d+ \S+, \d+ \S+, \d+ \S+)\n.+'
+            r'System image file is "(?P<image>\S+)"')
+
+    #match = [m.groups() for m in re.finditer(regex, line, re.DOTALL)]
+    #return match[0]
+    
+    match = re.search(regex, line, re.DOTALL)
+    if match:
+        result = (match['ios'], match['image'], match['uptime'])
+        
+    return result
+    
+
+
+def write_inventory_to_csv(data_filename, csv_filename):
+    to_csv = []
+    to_csv.append(headers)
+    
+    for file in data_filename:
+        hostname = file.split('.')[0].split('_')[-1]
+
+        with open(file) as f:
+            match = parse_sh_version(f.read())
+            parse_list = [item for item in match]
+            parse_list.insert(0, hostname)
+            to_csv.append(parse_list)
+
+    with open(csv_filename, 'w') as dest:
+        writer = csv.writer(dest)
+        for row in to_csv:
+            writer.writerow(row)
+
+    return None
+
+if __name__ == '__main__':
+    from pprint import pprint
+    pprint(write_inventory_to_csv(sh_version_files, 'routers_inventory.csv'))
+'''
+    with open('/home/vagrant/GitHub/pynet_rep/exercises/17_serialization/sh_version_r1.txt') as f:
+        print(parse_sh_version(f.read()))
+'''
+
+
+
+
