@@ -26,7 +26,7 @@ Ethernet0/1 соответствует список из двух кортеже
 
 import re
 
-
+'''
 def get_ip_from_cfg(filename):
     final_dict = {}
 
@@ -43,8 +43,35 @@ def get_ip_from_cfg(filename):
                 final_dict[match.group('intf')] = [(match.group('ip1'), match.group('mask1')), (match.group('ip2'), match.group('mask2'))]
 
     return final_dict
+'''
+
+
+def get_ip_from_cfg(filename):
+    regex = (r'interface (?P<intf>\S+\d).+?'
+             r'ip address (?P<ip1>\d+\.\d+\.\d+\.\d+) (?P<mask1>\d+\.\d+\.\d+\.\d+)\n'
+             r'(?: ip address (?P<ip2>\d+\.\d+\.\d+\.\d+)? (?P<mask2>\d+\.\d+\.\d+\.\d+)? secondary)?')
+
+    final_dict = {}
+
+    temp_string = ''
+
+    with open(filename) as f:
+        for line in f:
+            if not line.startswith('!'):
+                temp_string = temp_string + line
+
+            else:
+                match = re.search(regex, temp_string, re.DOTALL)
+                if match:
+                    final_dict[match['intf']] = [(match['ip1'], match['mask1'])]
+                    if match['ip2']:
+                        final_dict[match['intf']] = [(match['ip1'], match['mask1']), (match['ip2'], match['mask2'])]
+
+                temp_string = ''
+
+    return final_dict
 
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(get_ip_from_cfg('/home/vagrant/GitHub/pynet_rep/exercises/15_module_re/config_r21.txt'))
+    pprint(get_ip_from_cfg('/home/vagrant/GitHub/pynet_rep/exercises/15_module_re/config_r2.txt'))

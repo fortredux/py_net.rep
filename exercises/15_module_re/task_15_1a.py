@@ -24,7 +24,7 @@
 '''
 import re
 
-
+"""
 def get_ip_from_cfg(filename):
     '''
     This function takes filename of configuration file as an argument and gives back dictionary with such parameters:
@@ -44,6 +44,31 @@ def get_ip_from_cfg(filename):
             m = re.search(regex, line, re.DOTALL)
             if m:
                 final_dict[m['intf']] = (m['ip'], m['mask'])
+
+    return final_dict
+"""
+
+
+def get_ip_from_cfg(filename):
+    regex = (r'interface (?P<intf>\S+\d).+'
+             r'ip address (?P<ip>\d+\.\d+\.\d+\.\d+) (?P<mask>\d+\.\d+\.\d+\.\d+)')
+
+    final_dict = {}
+
+    temp_string = ''
+
+    with open(filename) as f:
+        for line in f:
+            if not line.startswith('!'):
+                temp_string = temp_string + line
+
+            else:
+                match = re.search(regex, temp_string, re.DOTALL)
+
+                if match:
+                    final_dict[match['intf']] = (match['ip'], match['mask'])
+
+                temp_string = ''
 
     return final_dict
 
