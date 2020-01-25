@@ -24,3 +24,31 @@ R6           Fa 0/2          143           R S I           2811       Fa 0/0
 
 Проверить работу функции на содержимом файла sh_cdp_n_sw1.txt
 '''
+
+import re
+
+
+def parse_sh_cdp_neighbors(lines):
+    regex = re.compile(r'^(?P<host>\S+)>show cdp neighbors$'
+                       r'|^(?P<device>\S+) \s+ (?P<intf>\S+ \S+) .+ (?P<port>\S+ \S+)$')
+
+    lines = lines.split('\n')
+    final_dict = {}
+
+    for line in lines:
+        match = regex.search(line)
+        if match:
+            if match['host']:
+                host = match['host']
+                final_dict[host] = {}
+            if match['device']:
+                final_dict[host][match['intf']] = {match['device']: match['port']}
+
+    return final_dict
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+
+    with open('/home/vagrant/GitHub/pynet_rep/exercises/17_serialization/sh_cdp_n_sw1.txt') as f:
+        pprint(parse_sh_cdp_neighbors(f.read()))
