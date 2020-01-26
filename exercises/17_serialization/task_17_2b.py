@@ -31,3 +31,33 @@
 > pip install graphviz
 
 '''
+
+import graphviz
+import yaml
+
+
+def transform_topology(yaml_file):
+    
+    to_graphviz = {}
+    
+    with open(yaml_file) as f:
+        table = yaml.safe_load(f)
+        for host, intf_device_port in table.items():
+            for intf, device_port in intf_device_port.items():
+                for device, port in device_port.items():
+                    to_graphviz[(host, intf)] = (device, port)
+
+    for key in list(to_graphviz.keys()):
+        if key in list(to_graphviz.values()):
+            del to_graphviz[key]
+
+    return to_graphviz
+
+
+if __name__ == '__main__':
+    
+    from draw_network_graph import draw_topology
+    from pprint import pprint
+    
+    pprint(transform_topology('topology.yaml'))
+    #draw_topology(transform_topology('topology.yaml'))
