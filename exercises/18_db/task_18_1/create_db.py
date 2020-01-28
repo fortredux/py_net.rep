@@ -19,6 +19,4 @@ if not db_exists:
     conn.close()
 
 else:
-    print('Database exists')
-
-print('Done')
+    print('Database exists...')
