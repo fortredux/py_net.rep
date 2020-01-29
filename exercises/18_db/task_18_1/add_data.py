@@ -43,7 +43,6 @@ if db_exists:
     for row in to_switches:
         try:
             with conn:
-
                 query = '''insert into switches (hostname, location) values (?, ?)'''
                 conn.execute(query, row)
         except sqlite3.IntegrityError as e:
@@ -53,7 +52,6 @@ if db_exists:
     for row in to_dhcp:
         try:
             with conn:
-
                 query = '''insert into dhcp (mac, ip, vlan, interface, switch) values (?, ?, ?, ?, ?)'''
                 conn.execute(query, row)
         except sqlite3.IntegrityError as e:
