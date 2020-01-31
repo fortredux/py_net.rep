@@ -44,3 +44,32 @@ R1#
 commands = [
     'logging 10.255.255.1', 'logging buffered 20010', 'no logging console'
 ]
+
+
+import time
+import yaml
+from netmiko import ConnectHandler
+
+
+def send_config_commands(device, config_commands):
+    final_result = ''
+
+    for device_dic in device:
+        ip = device_dic['ip']
+        #print(f'Connecting to device {ip}')
+        with ConnectHandler(**device_dic, timeout=5) as ssh:
+            ssh.enable()
+
+            for comm in config_commands:
+                time.sleep(1)
+                #print(comm)
+                result = ssh.send_config_set(comm)
+                final_result = final_result + result
+
+    return final_result
+
+
+if __name__ == '__main__':
+    with open('devices.yaml') as f:
+        yam = yaml.load(f, Loader=yaml.FullLoader)
+        print(send_config_commands(yam, commands))
