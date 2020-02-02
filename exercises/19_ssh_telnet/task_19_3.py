@@ -31,7 +31,36 @@ In [15]: send_commands(r1, config=['username user5 password pass5', 'username us
 Out[15]: 'config term\nEnter configuration commands, one per line.  End with CNTL/Z.\nR1(config)#username user5 password pass5\nR1(config)#username user6 password pass6\nR1(config)#end\nR1#'
 '''
 
-commands = [
-    'logging 10.255.255.1', 'logging buffered 20010', 'no logging console'
-]
-command = 'sh ip int br'
+
+import yaml
+from netmiko import ConnectHandler
+
+
+def send_commands(device, show=None, config=None):
+    ip = device['ip']
+    print(f'Connecting to device {ip}')
+
+    if config:
+        with ConnectHandler(**device) as ssh:
+            ssh.enable()
+
+            result = ssh.send_config_set(config)
+
+        return result
+
+    if show:
+        with ConnectHandler(**device) as ssh:
+            ssh.enable()
+
+            result = ssh.send_command(show)
+
+        return result
+
+
+if __name__ == '__main__':
+    with open('devices.yaml') as f:
+        yam = yaml.load(f, Loader=yaml.FullLoader)
+
+        for dic in yam:
+            #print(send_commands(dic, show='sh clock'))
+            print(send_commands(dic, config=['logging 10.255.255.1', 'logging buffered 20010', 'no logging console']))

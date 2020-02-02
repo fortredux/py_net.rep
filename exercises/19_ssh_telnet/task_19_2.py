@@ -50,7 +50,7 @@ import time
 import yaml
 from netmiko import ConnectHandler
 
-
+'''
 def send_config_commands(device, config_commands):
     final_result = ''
 
@@ -73,3 +73,23 @@ if __name__ == '__main__':
     with open('devices.yaml') as f:
         yam = yaml.load(f, Loader=yaml.FullLoader)
         print(send_config_commands(yam, commands))
+'''
+
+def send_config_commands(device, config_commands):
+    final_result = ''
+
+    with ConnectHandler(**device) as ssh:
+        ssh.enable()
+
+        result = ssh.send_config_set(config_commands)
+        final_result = final_result + result
+
+    return final_result
+
+
+if __name__ == '__main__':
+    with open('devices.yaml') as f:
+        yam = yaml.load(f, Loader=yaml.FullLoader)
+
+        for dic in yam:
+            print(send_config_commands(dic, commands))
