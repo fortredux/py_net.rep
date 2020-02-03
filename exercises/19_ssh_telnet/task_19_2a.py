@@ -34,19 +34,21 @@ commands = [
 
 def send_config_commands(device, config_commands, verbose=True):
     if verbose:
+        ip = device['ip']
+        print(f'Подключаюсь к {ip}...')
+
+    '''
+    if verbose:
         device['verbose'] = True
         ip = device['ip']
         print(f'Подключаюсь к {ip}...')
-        #to_return = f'Подключаюсь к {ip}...'
+    '''
 
     with ConnectHandler(**device) as ssh:
         ssh.enable()
-
         result = ssh.send_config_set(config_commands)
 
-    if verbose:
-        return result# + '\r\n'
-        #return to_return
+    return result
 
 
 if __name__ == '__main__':
@@ -54,5 +56,6 @@ if __name__ == '__main__':
         yam = yaml.load(f, Loader=yaml.FullLoader)
 
         for device in yam:
-            print(send_config_commands(device, commands))
+            #print(send_config_commands(device, commands))
+            send_config_commands(device, commands)
             #send_config_commands(device, commands, verbose=False)
