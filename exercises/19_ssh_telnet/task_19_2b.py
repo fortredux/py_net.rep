@@ -106,13 +106,13 @@ import yaml
 from netmiko import ConnectHandler
 from pprint import pprint
 
-'''
+
 def send_config_commands(device, config_commands, verbose=True):
     no_errors = {}
     errors = {}
+    ip = device['ip']
 
     if verbose:
-        ip = device['ip']
         print(f'Подключаюсь к {ip}...')
 
 
@@ -121,14 +121,22 @@ def send_config_commands(device, config_commands, verbose=True):
         for command in config_commands:
             result = ssh.send_config_set(command)
 
-            if 'Invalid input detected' or 'Incomplete command' or 'Ambiguous command' in result:
+            if 'Invalid input detected' in result:
+                print(f'Команда "{command}" выполнилась с ошибкой "Invalid input detected." на устройстве {ip}')
                 errors[command] = result
+            elif 'Incomplete command' in result:
+                print(f'Команда "{command}" выполнилась с ошибкой "Incomplete command." на устройстве {ip}')
+                errors[command] = result
+            elif 'Ambiguous command' in result:
+                print(f'Команда "{command}" выполнилась с ошибкой "Ambiguous command." на устройстве {ip}')
+                errors[command] = result
+
             else:
                 no_errors[command] = result
 
     return (no_errors, errors)
-'''
 
+'''
 def send_config_commands(device, config_commands, verbose=True):
     no_errors = {}
     errors = {}
@@ -150,12 +158,12 @@ def send_config_commands(device, config_commands, verbose=True):
             match = regex.search(result)
             if match:
                 errors[command] = result
-                print(f'Команда "{command}" выполнилась с ошибкой "{match.group()}" на устройстве {ip}')
+                print(f'Команда "{command}" выполнилась с ошибкой "{match.group()}." на устройстве {ip}')
             else:
                 no_errors[command] = result
 
     return (no_errors, errors)
-
+'''
 
 if __name__ == '__main__':
     with open('devices.yaml') as f:
