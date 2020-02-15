@@ -1,0 +1,14 @@
+R2#sh arp
+Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  192.168.100.1           5   ca01.0d5b.0008  ARPA   FastEthernet0/0
+Internet  192.168.100.2           -   ca02.0d75.0008  ARPA   FastEthernet0/0
+Internet  192.168.100.3           5   ca03.0d84.0008  ARPA   FastEthernet0/0
+Internet  192.168.100.100         1   b29e.ce3b.e8e0  ARPA   FastEthernet0/0
+R1#sh ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0/0            192.168.100.1   YES NVRAM  up                    up      
+FastEthernet0/1            unassigned      YES NVRAM  administratively down down    
+R3#sh ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0/0            192.168.100.3   YES NVRAM  up                    up      
+FastEthernet0/1            unassigned      YES NVRAM  administratively down down    

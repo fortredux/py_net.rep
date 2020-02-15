@@ -74,7 +74,7 @@ def send_show_command_to_devices(devices, command, filename, limit=3):
 # Variant with concurrent.futures and map
 
 def send_show_command_to_devices(devices, command, filename, limit=3):
-    to_return = ''
+    to_file = ''
 
     with ThreadPoolExecutor(max_workers=limit) as executor:
         result = executor.map(send_command, devices, repeat(command))
@@ -82,12 +82,15 @@ def send_show_command_to_devices(devices, command, filename, limit=3):
             to_return += r + '\n'
 
     with open(filename, 'w') as dest:
-        dest.write(to_return)
+        dest.write(to_file)
 
 
 if __name__ == '__main__':
+    '''
     with open('devices.yaml') as f:
         dictionaries = yaml.load(f, Loader=yaml.FullLoader)
+    '''
+    dictionaries = yaml.load(open('devices.yaml'), Loader=yaml.FullLoader)
 
     send_show_command_to_devices(dictionaries, 'sh ip int br', 'output.txt')
 
