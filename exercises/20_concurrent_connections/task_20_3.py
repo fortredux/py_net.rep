@@ -41,12 +41,15 @@ commands = {'192.168.100.1': 'sh ip int br',
             '192.168.100.3': 'sh ip int br'}
 
 
+from itertools import repeat
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import yaml
 from netmiko import ConnectHandler
 
 
+# Version where device output is written in random order to output file
+'''
 def send_command(device_params, command):
     with ConnectHandler(**device_params) as ssh:
         ssh.enable()
@@ -71,6 +74,54 @@ def send_command_to_devices(devices, commands_dict, filename, limit):
         for f in as_completed(future_list):
             result = f.result()
             to_file += result + '\n'
+
+    with open(filename, 'w') as dest:
+        dest.write(to_file)
+'''
+
+# Version where all commands are send to send_command function
+'''
+def send_command(device_params, command):
+    ip = device_params['ip']
+    command = command[ip]
+    with ConnectHandler(**device_params) as ssh:
+        ssh.enable()
+        first_line = ssh.find_prompt() + command + '\n'
+        result = ssh.send_command(command)
+    return first_line + result
+
+
+def send_command_to_devices(devices, commands_dict, filename, limit):
+    to_file = ''
+
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+
+        result = executor.map(send_command, devices, repeat(commands))
+        for r in result:
+            to_file += r + '\n'
+
+    with open(filename, 'w') as dest:
+        dest.write(to_file)
+'''
+
+# Version with commands.values() in map
+
+def send_command(device_params, command):
+    with ConnectHandler(**device_params) as ssh:
+        ssh.enable()
+        first_line = ssh.find_prompt() + command + '\n'
+        result = ssh.send_command(command)
+    return first_line + result
+
+
+def send_command_to_devices(devices, commands_dict, filename, limit):
+    to_file = ''
+
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+
+        result = executor.map(send_command, devices, commands.values())
+        for r in result:
+            to_file += r + '\n'
 
     with open(filename, 'w') as dest:
         dest.write(to_file)

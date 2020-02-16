@@ -92,6 +92,6 @@ if __name__ == '__main__':
     '''
     dictionaries = yaml.load(open('devices.yaml'), Loader=yaml.FullLoader)
 
-    send_show_command_to_devices(dictionaries, 'sh ip int br', 'output.txt')
+    send_show_command_to_devices(dictionaries, 'sh ip int br', 'output_20_2.txt')
 
-    print(open('output.txt').read())
+    print(open('output_20_2.txt').read())
