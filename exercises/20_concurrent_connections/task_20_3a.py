@@ -53,3 +53,49 @@ commands = {'192.168.100.1': ['sh ip int br', 'sh arp'],
             '192.168.100.3': ['sh ip int br', 'sh ip route | ex -']}
 
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+import yaml
+from netmiko import ConnectHandler
+
+
+def send_command(device_params, commands):
+    to_return = ''
+
+    with ConnectHandler(**device_params) as ssh:
+        ssh.enable()
+
+        for command in commands:
+            first_line = ssh.find_prompt() + command + '\n'
+            result = ssh.send_command(command)
+            to_return += first_line + result + '\n'
+    return to_return
+
+
+def send_command_to_devices(devices, commands_dict, filename, limit):
+    to_file = ''
+
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        future_list = []
+
+        for device in devices:
+            ip = device['ip']
+            commands = commands_dict[ip]
+
+            future = executor.submit(send_command, device, commands)
+            future_list.append(future)
+
+        for f in as_completed(future_list):
+            result = f.result()
+            to_file += result
+
+    with open(filename, 'w') as dest:
+        dest.write(to_file)
+
+
+if __name__ == '__main__':
+    dictionaries = yaml.load(open('devices.yaml'), Loader=yaml.FullLoader)
+
+    send_command_to_devices(dictionaries, commands, 'output_20_3a.txt', limit=3)
+
+    print(open('output_20_3a.txt').read())
