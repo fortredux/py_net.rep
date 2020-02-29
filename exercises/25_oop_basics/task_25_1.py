@@ -41,3 +41,15 @@ topology_example = {('R1', 'Eth0/0'): ('SW1', 'Eth0/1'),
                     ('SW1', 'Eth0/3'): ('R3', 'Eth0/0')}
 
 
+class Topology:
+    def __init__(self, topology):
+        for key, value in list(topology.items()):
+            if key in topology.values():
+                del topology[key]
+        self.topology = topology
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    top = Topology(topology_example)
+    pprint(top.topology)
