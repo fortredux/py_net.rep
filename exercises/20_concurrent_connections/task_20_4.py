@@ -84,6 +84,7 @@ R3#
 '''
 
 
+from itertools import repeat
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import yaml
@@ -101,7 +102,7 @@ def send_commands_to_devices(devices, filename, show=None, config=None, limit=3)
         command = config
 
     to_file = ''
-
+    '''
     with ThreadPoolExecutor(max_workers=limit) as executor:
         future_list = []
 
@@ -112,6 +113,11 @@ def send_commands_to_devices(devices, filename, show=None, config=None, limit=3)
         for f in as_completed(future_list):
             result = f.result()
             to_file += result
+    '''
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        result = executor.map(send_command, devices, repeat(command), repeat(command_type))
+        for r in result:
+            to_file += r
 
     with open(filename, 'w') as dest:
         dest.write(to_file.rstrip())
