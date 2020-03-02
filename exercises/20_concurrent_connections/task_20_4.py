@@ -82,3 +82,70 @@ R3#
 
 Для выполнения задания можно создавать любые дополнительные функции.
 '''
+
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+import yaml
+from netmiko import ConnectHandler
+
+
+def send_commands_to_devices(devices, filename, show=None, config=None, limit=3):
+    if show and config:
+        return print('Можно указать только одну команду: либо show, либо config.')
+    elif show:
+        command_type = 'show'
+        command = show
+    elif config:
+        command_type = 'config'
+        command = config
+
+    to_file = ''
+
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        future_list = []
+
+        for device in devices:
+            future = executor.submit(send_command, device, command, command_type)
+            future_list.append(future)
+
+        for f in as_completed(future_list):
+            result = f.result()
+            to_file += result
+
+    with open(filename, 'w') as dest:
+        dest.write(to_file.rstrip())
+
+
+def send_command(device_params, command, command_type):
+    to_return = ''
+
+    with ConnectHandler(**device_params) as ssh:
+        ssh.enable()
+
+        if command_type == 'show':
+            first_line = ssh.find_prompt() + command + '\n'
+            result = ssh.send_command(command)
+            to_return += first_line + result + '\n'
+
+        elif command_type == 'config':
+            if type(command) == str:
+                first_line = ssh.find_prompt() + command + '\n'
+                result = ssh.send_config_set(command)
+                to_return += first_line + result + '\n'
+            elif type(command) == list:
+                result = ssh.send_config_set(command)
+                cut_index = result.find('#end') + 4
+                to_return += ssh.find_prompt() + result[:cut_index] + '\n' + '\n'
+
+    return to_return
+
+
+if __name__ == '__main__':
+    dictionaries = yaml.load(open('devices.yaml'), Loader=yaml.FullLoader)
+
+    #send_commands_to_devices(devices=dictionaries, show='sh ip int br', filename='output_20_4.txt')
+    #send_commands_to_devices(devices=dictionaries, show='sh ip int br', config='logging 10.5.5.5', filename='output_20_4.txt')
+    send_commands_to_devices(dictionaries, config=['router ospf 55', 'network 0.0.0.0 255.255.255.255 area 0'], filename='output_20_4.txt')
+
+    print(open('output_20_4.txt').read())
