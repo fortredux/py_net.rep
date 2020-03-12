@@ -40,7 +40,8 @@ def parse_command_output(template, command_output):
     with open(template) as temp:
         fsm = textfsm.TextFSM(temp)
         result = fsm.ParseText(command_output)
-        result.insert(0, fsm.header)
+        result = [fsm.header] + result
+        #result.insert(0, fsm.header)
     return result
 
 

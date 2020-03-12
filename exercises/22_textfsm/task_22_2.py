@@ -14,3 +14,14 @@
 
 Проверить работу шаблона с помощью функции parse_command_output из задания 22.1.
 '''
+
+
+from tabulate import tabulate
+
+from task_22_1 import parse_command_output
+
+
+with open('output/sh_ip_dhcp_snooping.txt') as f:
+    output = f.read()
+table_data = parse_command_output('templates/sh_ip_dhcp_snooping.template', output)
+print(tabulate(table_data, headers='firstrow'))
