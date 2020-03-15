@@ -43,8 +43,13 @@ topology_example = {('R1', 'Eth0/0'): ('SW1', 'Eth0/1'),
 
 class Topology:
     def __init__(self, topology):
+        '''
         for key, value in list(topology.items()):
             if key in topology.values():
+                del topology[key]
+        '''
+        for key, value in list(topology.items()):
+            if ((value, key)) in topology.items():
                 del topology[key]
         self.topology = topology
 

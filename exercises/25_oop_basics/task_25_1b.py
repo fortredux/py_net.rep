@@ -64,10 +64,16 @@ class Topology:
     def __init__(self, topology_dict):
         self.topology = self._normalize(topology_dict)
 
-
+    '''
     def _normalize(self, dic):
         for key, value in list(dic.items()):
             if key in dic.values():
+                del dic[key]
+        return dic
+    '''
+    def _normalize(self, dic):
+        for key, value in list(dic.items()):
+            if ((value, key)) in dic.items():
                 del dic[key]
         return dic
 

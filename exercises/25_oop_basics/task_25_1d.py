@@ -57,13 +57,18 @@ topology_example = {('R1', 'Eth0/0'): ('SW1', 'Eth0/1'),
 class Topology:
     def __init__(self, topology_dict):
         self.topology = self._normalize(topology_dict)
-
+    '''
     def _normalize(self, dic):
         for key, value in list(dic.items()):
             if key in dic.values():
                 del dic[key]
         return dic
-
+    '''
+    def _normalize(self, dic):
+        for key, value in list(dic.items()):
+            if ((value, key)) in dic.items():
+                del dic[key]
+        return dic
 
     def delete_link(self, value1, value2):
         if (value1, value2) in self.topology.items():
@@ -75,7 +80,6 @@ class Topology:
         elif (value1, value2) or (value2, value1) not in self.topology.items():
             print('Такого соединения нет')
 
-
     def delete_node(self, node):
         delete_list = [key for key, value in self.topology.items() if node in key or node in value]
 
@@ -84,7 +88,6 @@ class Topology:
                 del self.topology[k]
         else:
             print('Такого устройства нет')
-
 
     def add_link(self, link1, link2):
         link_exists = False
@@ -103,10 +106,6 @@ class Topology:
                     print('Cоединение с одним из портов существует')
                 else:
                     self.topology[link1] = link2
-
-
-
-
         elif link_exists:
             print('Такое соединение существует')
 
