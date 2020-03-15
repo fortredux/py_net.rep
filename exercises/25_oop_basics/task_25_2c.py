@@ -61,3 +61,109 @@ ValueError: При выполнении команды "logging 0255.255.1" на
 
 '''
 
+
+import telnetlib
+import time
+import textfsm
+import clitable
+
+import yaml
+
+
+class CiscoTelnet:
+    def __init__(self, ip, username, password, secret):
+        self.ip = ip
+        self.username = username
+        self.password = password
+        self.secret = secret
+
+        self.connection = telnetlib.Telnet(self.ip)
+        self.connection.read_until(b'Username')
+        print(f'Подключение к устройству {ip} установлено')
+        self._write_line(self.username)
+        self.connection.read_until(b'Password')
+        self._write_line(self.password)
+        time.sleep(1)
+        self._write_line('enable')
+        self.connection.read_until(b'Password:')
+        self._write_line(self.secret)
+        time.sleep(1)
+        self._write_line('terminal length 0')
+        time.sleep(1)
+        self.connection.read_until(b'#')
+
+    def _write_line(self, line):
+        line = bytes(line, 'utf-8')
+        return self.connection.write(line + b"\r\n")
+
+    def send_show_command(self, command, templates, parse=True):
+        send = self._write_line(command)
+        time.sleep(1)
+        self.connection.read_until(b'#')
+        output = self.connection.read_very_eager().decode('ascii')
+
+        if parse:
+            attribute ={}
+            attribute['Command'] = command
+            cli_table = clitable.CliTable('index', templates)
+            cli_table.ParseCmd(output, attribute)
+            to_return = [dict(zip(cli_table.header, row)) for row in cli_table]
+            return to_return
+        return output
+
+    def send_config_commands(self, commands, strict=False):
+        errors = ['Invalid input detected', 'Incomplete command', 'Ambiguous command']
+
+        if type(commands) == str:
+            command = commands
+            self._write_line('conf t')
+            self.connection.read_until(b'#')
+            self._write_line(commands)
+            time.sleep(1)
+            output = self.connection.read_very_eager().decode('ascii')
+            for error in errors:
+                if error in output:
+                    if strict:
+                        raise ValueError(f'При выполнении команды "{command}" на устройстве {self.ip} возникла ошибка -> {error}')
+                    else:
+                        print(f'При выполнении команды "{command}" на устройстве {self.ip} возникла ошибка -> {error}')
+            self._write_line('end')
+            return output
+
+        elif type(commands) == list:
+            to_return = ''
+            self._write_line('conf t')
+            self.connection.read_until(b'#')
+            for command in commands:
+                self._write_line(command)
+                time.sleep(1)
+                output = self.connection.read_very_eager().decode('ascii')
+                for error in errors:
+                    if error in output:
+                        if strict:
+                            raise ValueError(f'При выполнении команды "{command}" на устройстве {self.ip} возникла ошибка -> {error}')
+                        else:
+                            print(f'При выполнении команды "{command}" на устройстве {self.ip} возникла ошибка -> {error}')
+                to_return += output + '\n'
+            self._write_line('end')
+            return to_return.rstrip()
+
+
+if __name__ == "__main__":
+    from pprint import pprint
+
+    with open('devices.yaml') as d:
+        devices = yaml.load(d, Loader=yaml.FullLoader)
+        first_device = devices[0]
+
+    r1 = CiscoTelnet(**first_device)
+
+    commands_with_errors = ['logging 0255.255.1', 'logging', 'i']
+    correct_commands = ['logging buffered 20010', 'ip http server']
+    commands = commands_with_errors+correct_commands
+
+    #pprint(r1.send_config_commands(commands))
+    #pprint(r1.send_config_commands(commands, strict=True))
+    pprint(r1.send_config_commands(correct_commands, strict=True))
+
+    del r1

@@ -67,3 +67,71 @@ Out[5]:
 '''
 
 
+import telnetlib
+import time
+import textfsm
+import clitable
+
+import yaml
+
+
+class CiscoTelnet:
+    def __init__(self, ip, username, password, secret):
+        self.ip = ip
+        self.username = username
+        self.password = password
+        self.secret = secret
+
+        self.connection = telnetlib.Telnet(self.ip)
+        self.connection.read_until(b'Username')
+
+        self._write_line(self.username)
+        self.connection.read_until(b'Password')
+
+        self._write_line(self.password)
+        time.sleep(1)
+
+        self._write_line('enable')
+        self.connection.read_until(b'Password:')
+        self._write_line(self.secret)
+        time.sleep(1)
+
+        self._write_line('terminal length 0')
+        self.connection.read_until(b'#')
+
+        print(f'Connection to device {ip} established')
+
+    def _write_line(self, line):
+        line = bytes(line, 'utf-8')
+        return self.connection.write(line + b"\r\n")
+
+    def send_show_command(self, command, templates, parse=True):
+        send = self._write_line(command)
+        time.sleep(1)
+
+        self.connection.read_until(b'#')
+        output = self.connection.read_very_eager().decode('ascii')
+
+        if parse:
+            attribute ={}
+            attribute['Command'] = command
+
+            cli_table = clitable.CliTable('index', templates)
+            cli_table.ParseCmd(output, attribute)
+
+            to_return = [dict(zip(cli_table.header, row)) for row in cli_table]
+
+            return to_return
+
+        return output
+
+
+if __name__ == "__main__":
+    with open('devices.yaml') as d:
+        devices = yaml.load(d, Loader=yaml.FullLoader)
+        first_device = devices[0]
+
+    r1 = CiscoTelnet(**first_device)
+
+    print(r1.send_show_command('sh ip int br', 'templates', parse=True))
+    #print(r1.send_show_command('sh ip int br', 'templates', parse=False))
