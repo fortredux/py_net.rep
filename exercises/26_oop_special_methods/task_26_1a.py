@@ -40,3 +40,21 @@ topology_example = {('R1', 'Eth0/0'): ('SW1', 'Eth0/1'),
                     ('SW1', 'Eth0/3'): ('R3', 'Eth0/0')}
 
 
+class Topology:
+    def __init__(self, topology_dict):
+        self.topology = self._normalize(topology_dict)
+
+    def _normalize(self, dic):
+        for key, value in list(dic.items()):
+            if ((value, key)) in dic.items():
+                del dic[key]
+        return dic
+
+    def __iter__(self):
+        return iter(self.topology)
+
+
+if __name__ == '__main__':
+    top = Topology(topology_example)
+    for link in top:
+        print(link)
