@@ -114,7 +114,8 @@ class CiscoTelnet:
     def send_config_commands(self, commands, strict=False):
         errors = ['Invalid input detected', 'Incomplete command', 'Ambiguous command']
 
-        if type(commands) == str:
+        #if type(commands) == str:
+        if isinstance(commands, str):
             command = commands
             self._write_line('conf t')
             self.connection.read_until(b'#')
@@ -130,7 +131,8 @@ class CiscoTelnet:
             self._write_line('end')
             return output
 
-        elif type(commands) == list:
+        #elif type(commands) == list:
+        elif isinstance(commands, list):
             to_return = ''
             self._write_line('conf t')
             self.connection.read_until(b'#')

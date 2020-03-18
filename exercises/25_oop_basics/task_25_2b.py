@@ -79,14 +79,16 @@ class CiscoTelnet:
         return output
 
     def send_config_commands(self, commands):
-        if type(commands) == str:
+        #if type(commands) == str:
+        if isinstance(commands, str):
             self._write_line('conf t')
             time.sleep(1)
             self._write_line(commands)
             time.sleep(1)
             output = self.connection.read_very_eager().decode('ascii')
             return output
-        elif type(commands) == list:
+        #elif type(commands) == list:
+        elif isinstance(commands, list):
             to_return = ''
             self._write_line('conf t')
             time.sleep(1)
