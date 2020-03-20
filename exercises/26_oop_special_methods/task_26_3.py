@@ -42,3 +42,30 @@ ValueError: Incorrect mask
 
 '''
 
+
+class IPAddress:
+    def __init__(self, ip_addr):
+        if not '/' in ip_addr and not '.'*3 in ip_addr:
+            raise ValueError('IP-адресс не в верном формате')
+
+        ip, mask = ip_addr.split('/')
+        for octet in ip.split('.'):
+            octet = int(octet)
+            if octet not in range(256):
+                raise ValueError('Incorrect IPv4 address')
+        mask = int(mask)
+        if mask not in range(8, 33):
+            raise ValueError('Incorrect mask')
+
+        self.ip = ip
+        self.mask = mask
+
+
+if __name__ == "__main__":
+    ip_addr = IPAddress('192.168.0.1/16')
+    #ip_addr = IPAddress('10.1.1.1/240')
+
+    print(ip_addr.ip)
+    print(ip_addr.mask)
+
+    del ip_addr
