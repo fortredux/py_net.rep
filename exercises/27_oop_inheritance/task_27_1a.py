@@ -31,3 +31,37 @@ device_params = {
     'ip': '192.168.100.1'
 }
 
+
+from base_connect_class import BaseSSH
+
+
+class CiscoSSH(BaseSSH):
+
+    def __init__(self, **device_params):
+
+        if not 'ip' in device_params.keys():
+            ip_value = input('Введите ip-адрес устройства: ')
+            device_params['ip'] = ip_value
+        if not 'device_type' in device_params.keys():
+            device_type_value = input('Введите тип устройства (например: cisco_ios): ')
+            device_params['device_type'] = device_type_value
+        if not 'username' in device_params.keys():
+            username_value = input('Введите имя пользователя: ')
+            device_params['username'] = username_value
+        if not 'password' in device_params.keys():
+            password_value = input('Введите пароль: ')
+            device_params['password'] = password_value
+        if not 'secret' in device_params.keys():
+            secret_value = input('Введите пароль для режима enable: ')
+            device_params['secret'] = secret_value
+
+        super().__init__(**device_params)
+        self.ssh.enable()
+
+
+if __name__ == "__main__":
+    r1 = CiscoSSH(**device_params)
+
+    print(r1.send_show_command('sh ip int br'))
+
+    del r1
