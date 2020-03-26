@@ -27,3 +27,11 @@ interface Gi0/10
 Не копируйте код функции generate_config.
 
 '''
+
+
+from task_21_1 import generate_config
+
+import yaml
+
+dic = yaml.load(open('data_files/add_vlan_to_switch.yaml'), Loader=yaml.FullLoader)
+print(generate_config('templates/add_vlan_to_switch.txt', dic), end='')

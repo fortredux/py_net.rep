@@ -50,4 +50,4 @@ def generate_config(template, data_dict):
 if __name__ == "__main__":
     with open('data_files/for.yml') as f:
         dic = yaml.load(f, Loader=yaml.FullLoader)
-    print(generate_config('templates/for.txt', dic))
+    print(generate_config('templates/for.txt', dic), end='')

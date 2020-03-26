@@ -1,0 +1,30 @@
+{% include 'cisco_base.txt' %}
+
+!
+!
+no ip domain lookup
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+{% include 'alias.txt' %}
+
+alias exec desc sh int desc | ex down
+alias exec ospf sh run | s ^router ospf
+!
+line con 0
+ logging synchronous
+ history size 100
+line vty 0 4
+ logging synchronous
+ history size 100
+!
+{% include 'eem_int_desc.txt' %}
+
+ action 5.0 syslog msg "Description for $_nd_local_intf_name changed to $_nd_cdp_entry_name $_nd_port_id"
+ action 6.0 cli command "end"
+ action 7.0 cli command "exit"
+!

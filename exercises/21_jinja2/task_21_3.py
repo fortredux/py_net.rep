@@ -35,3 +35,11 @@
 
 
 '''
+
+
+from task_21_1 import generate_config
+
+import yaml
+
+dic = yaml.load(open('data_files/ospf.yml'), Loader=yaml.FullLoader)
+print(generate_config('templates/ospf.txt', dic))
