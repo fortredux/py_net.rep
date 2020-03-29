@@ -27,3 +27,19 @@ device_params = {
     'password': 'cisco',
     'secret': 'cisco'
 }
+
+
+from netmiko.cisco.cisco_ios import CiscoIosBase
+
+
+class MyNetmiko(CiscoIosBase):
+
+    def __init__(self, **device_params):
+        super().__init__(**device_params)
+        self.enable()
+
+
+if __name__ == '__main__':
+    r1 = MyNetmiko(**device_params)
+    print(r1.send_command('sh ip int br'))
+    del r1
