@@ -4,11 +4,29 @@ import re
 import os
 import sqlite3
 
+from pprint import pprint
 
 def add_dhcp_data_to_database(db_filename, schema_filename, dhcp_data):
     if not os.path.exists(db_filename):
         create_database(db_filename, schema_filename)
+
     conn = sqlite3.connect(db_filename)
+    cursor = conn.cursor()
+
+    # Delete all old data wich have same mac (mac is unique) with new data
+    for row in dhcp_data:
+        mac = row[0]
+        query = cursor.execute(f"DELETE from dhcp WHERE mac = '{mac}'")
+
+    # Alter old data which is left and mark as inactive
+    query = cursor.execute('select * from dhcp')
+    current_data = [row for row in query]
+    if current_data:
+        for row in current_data:
+            mac = row[0]
+            cursor.execute(f" UPDATE dhcp SET active = '0' WHERE mac = '{mac}'")
+
+    # Add new data
     print('Adding data to dhcp...')
     for row in dhcp_data:
         try:
@@ -49,7 +67,7 @@ def get_dhcp_data(files_list):
     dhcp_data = []
     regex = re.compile(r'(?P<mac>\d+:\S+:\d+) + (?P<ip>\d+.\S+.\d+) + \d+ + \D+ + (?P<vlan>\d+) + (?P<inteface>\S+)')
     for file in files_list:
-        switch = file.split('_')[0]
+        switch =  re.search('(\w+)_dhcp_snooping.txt', file).group(1)
         with open(file) as f:
             for line in f:
                 match = regex.search(line)
