@@ -4,7 +4,6 @@ import re
 import os
 import sqlite3
 
-from pprint import pprint
 
 def add_dhcp_data_to_database(db_filename, schema_filename, dhcp_data):
     if not os.path.exists(db_filename):
@@ -13,7 +12,7 @@ def add_dhcp_data_to_database(db_filename, schema_filename, dhcp_data):
     conn = sqlite3.connect(db_filename)
     cursor = conn.cursor()
 
-    # Delete all old data wich have same mac (mac is unique) with new data
+    # Delete all old data which have same mac (mac is unique) with new data
     for row in dhcp_data:
         mac = row[0]
         query = cursor.execute(f"DELETE from dhcp WHERE mac = '{mac}'")
